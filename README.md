@@ -2,7 +2,7 @@
 # Garcia, Sabrina Verónica
 
 ```
-# Completar con dirección donde despĺegaron en Render.com
+#
 https://two024-tp-entrega-2-sabrivg.onrender.com
 ```
 
