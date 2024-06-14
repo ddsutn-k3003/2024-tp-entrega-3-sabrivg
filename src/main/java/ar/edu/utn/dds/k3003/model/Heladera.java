@@ -18,8 +18,7 @@ public class Heladera {
     @Column(columnDefinition ="varchar")
     private String nombre;
 
-    @Transient
-    List<String> viandas;
+    int viandas;
     @Column
     int capacidadMax; //en unidad de viandas
     @Column
@@ -48,23 +47,23 @@ public class Heladera {
         this.activa=true;
         //this.capacidadMax=20;//por ahora
         this.cantidadAperturas=0;
-        this.viandas=new ArrayList<String>();
+        this.viandas=0;
     }
 
     public Heladera() {
     }
 
     public void depositarVianda(String qrVianda) {
-        this.viandas.add(qrVianda);
+        this.viandas++;
         this.cantidadAperturas++;
     }
 
     public void retirarVianda(String qrVianda) throws Exception {
         this.cantidadAperturas++;
-        if(!viandas.contains(qrVianda)) {
-            throw new Exception("No existe la vianda en la heladera ");
+        if (this.viandas > 0) {
+            this.viandas--;
+        } else {
+            throw new NoSuchElementException("No hay viandas para remover");
         }
-        this.viandas.remove(qrVianda);
-
     }
 }

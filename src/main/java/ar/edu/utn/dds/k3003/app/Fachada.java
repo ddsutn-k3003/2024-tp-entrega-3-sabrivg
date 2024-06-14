@@ -49,7 +49,7 @@ public class Fachada implements FachadaHeladeras {
 
     @Override public Integer cantidadViandas(Integer heladeraId) throws NoSuchElementException{
       Heladera heladera=heladerasRepository.findById(heladeraId.longValue());
-      return heladera.getViandas().size();
+      return heladera.getViandas();
  }
 
     @Override public void retirar(RetiroDTO retiro) throws NoSuchElementException{
