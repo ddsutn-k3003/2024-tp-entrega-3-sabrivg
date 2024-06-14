@@ -35,7 +35,7 @@ public class Fachada implements FachadaHeladeras {
     }
 
     @Override public HeladeraDTO agregar(HeladeraDTO heladeraDTO){
-    Heladera heladera= new Heladera(heladeraDTO.getId().longValue(),heladeraDTO.getNombre());
+    Heladera heladera= new Heladera(heladeraDTO.getNombre());
     heladera = this.heladerasRepository.save(heladera);
     return heladeraMapper.map(heladera);
     }

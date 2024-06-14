@@ -42,8 +42,7 @@ public class Heladera {
     @Transient
     long cantidadAperturas;
 
-    public Heladera(Long id,String nombre) {
-        this.id = id;
+    public Heladera(String nombre) {
         this.nombre=nombre;
         this.fechaInicioFuncionamiento=LocalDate.now();
         this.activa=true;

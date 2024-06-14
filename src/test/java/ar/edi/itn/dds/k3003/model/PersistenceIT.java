@@ -30,7 +30,7 @@ public class PersistenceIT {
     }
     @Test
     public void testGuardarYRecuperarHeladera() throws Exception {
-        Heladera h1=new Heladera(null,"miHeladera");
+        Heladera h1=new Heladera("miHeladera");
         entityManager.getTransaction().begin();
         entityManager.persist(h1); //se prepara insert
         entityManager.getTransaction().commit();//se ejecutan las sentencias
