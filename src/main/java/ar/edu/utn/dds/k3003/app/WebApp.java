@@ -26,9 +26,10 @@ public class WebApp {
         var URL_HELADERAS = System.getenv().get("URL_HELADERAS");
         var URL_COLABORADORES = System.getenv().get("URL_COLABORADORES");
 
-        var port = System.getenv().getOrDefault("PORT", "8080");
+        Integer port = Integer.parseInt(System.getProperty("port","8080"));
+        Javalin app = Javalin.create().start(port);
 
-        Map<String, String> env = System.getenv();
+      /*  Map<String, String> env = System.getenv();
         Map<String, Object> configOverrides = new HashMap<String, Object>();
         String[] keys = new String[] { "javax.persistence.jdbc.url", "javax.persistence.jdbc.user",
                 "javax.persistence.jdbc.password", "javax.persistence.jdbc.driver", "hibernate.hbm2ddl.auto",
@@ -38,8 +39,8 @@ public class WebApp {
                 String value = env.get(key);
                 configOverrides.put(key, value);
             }
-        }
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("tpdb", configOverrides);
+        }*/
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("tpdb");
 
         var fachada=new Fachada();
         var objectMapper = createObjectMapper();
@@ -47,7 +48,7 @@ public class WebApp {
         var heladeraController=new HeladeraController(fachada);
         var temperaturaController=new TemperaturaController(fachada);
 
-        Javalin app = Javalin.create().start(Integer.parseInt(port));
+
 
         app.post("/heladeras",heladeraController::agregar);
         app.get("/heladeras/{id}",heladeraController::obtener);
