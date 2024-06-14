@@ -12,6 +12,7 @@ import ar.edu.utn.dds.k3003.repositories.TemperaturaRepository;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Fachada implements FachadaHeladeras {
 
@@ -41,44 +42,55 @@ public class Fachada implements FachadaHeladeras {
     }
 
     @Override public void depositar(Integer heladeraId, String qrVianda) throws NoSuchElementException{
-      Heladera heladera= heladerasRepository.findById(heladeraId.longValue());
+        Heladera heladera = this.heladerasRepository.findById(Long.valueOf(heladeraId))
+                .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + heladeraId));
       this.fachadaViandas.buscarXQR(qrVianda);
+        fachadaViandas.modificarEstado(qrVianda, EstadoViandaEnum.DEPOSITADA);
       heladera.depositarVianda(qrVianda);
-       fachadaViandas.modificarEstado(qrVianda, EstadoViandaEnum.DEPOSITADA);
+      this.heladerasRepository.update(heladera);
+
     }
 
     @Override public Integer cantidadViandas(Integer heladeraId) throws NoSuchElementException{
-      Heladera heladera=heladerasRepository.findById(heladeraId.longValue());
+        Heladera heladera = this.heladerasRepository.findById(Long.valueOf(heladeraId))
+                .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + heladeraId));
       return heladera.getViandas();
  }
 
     @Override public void retirar(RetiroDTO retiro) throws NoSuchElementException{
-        Heladera heladera=heladerasRepository.findById(retiro.getHeladeraId().longValue());
-        ViandaDTO viandaDTO=this.fachadaViandas.buscarXQR(retiro.getQrVianda());
+        Heladera heladera = this.heladerasRepository.findById(Long.valueOf(retiro.getHeladeraId()))
+                .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + retiro.getHeladeraId()));
+        this.fachadaViandas.buscarXQR(retiro.getQrVianda());
+        fachadaViandas.modificarEstado(retiro.getQrVianda(), EstadoViandaEnum.RETIRADA);
         try {
-            heladera.retirarVianda(retiro.getQrVianda());
+            heladera.retirarVianda();
+            this.heladerasRepository.update(heladera);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("No hay viandas para retirar");
         }
-        fachadaViandas.modificarEstado(viandaDTO.getCodigoQR(),EstadoViandaEnum.RETIRADA);
+
 
     }
 
     @Override public void temperatura(TemperaturaDTO temperaturaDTO){
-     Temperatura temperatura=new Temperatura(temperaturaDTO.getTemperatura(),temperaturaDTO.getHeladeraId(), LocalDateTime.now());
-     Heladera heladera=this.heladerasRepository.findById(temperatura.getHeladeraId().longValue());
-     temperatura=this.temperaturaRepository.save(temperatura);
+        Heladera heladera = this.heladerasRepository.findById(Long.valueOf(temperaturaDTO.getHeladeraId()))
+                .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + temperaturaDTO.getHeladeraId()));
+
+        Temperatura temperatura=new Temperatura(temperaturaDTO.getTemperatura(),heladera, LocalDateTime.now());
+        temperatura=this.temperaturaRepository.save(temperatura);
     }
 
     @Override public List<TemperaturaDTO> obtenerTemperaturas(Integer heladeraId){
-     Heladera heladera=heladerasRepository.findById(heladeraId.longValue());
-     List<Temperatura> temperaturas= temperaturaRepository.findById(heladeraId.longValue());
-     List<TemperaturaDTO> temperaturaDTOS=new ArrayList<TemperaturaDTO>();
-     for (Temperatura t: temperaturas) {
-        TemperaturaDTO temp=new TemperaturaDTO(t.getTemperatura(),t.getHeladeraId(),t.getFechaMedicion());
-        temperaturaDTOS.add(temp);
-        }
-     Collections.reverse(temperaturaDTOS);
+        Heladera heladera = this.heladerasRepository.findById(Long.valueOf(heladeraId))
+                .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + heladeraId));
+
+        List<Temperatura> temperaturas= temperaturaRepository.findAllById(heladera.getId());
+
+        List<TemperaturaDTO> temperaturaDTOS = temperaturas.stream()
+                .map(temperatura -> temperaturaMapper.map(temperatura))
+                .collect(Collectors.toList());
+
+        Collections.reverse(temperaturaDTOS);
      return temperaturaDTOS;
     }
 
@@ -87,6 +99,18 @@ public class Fachada implements FachadaHeladeras {
     }
 
     public HeladeraDTO obtenerHeladera(Integer id){
-      return heladeraMapper.map(heladerasRepository.findById(id.longValue()));
+        Heladera heladera = this.heladerasRepository.findById(Long.valueOf(id))
+                .orElseThrow(() -> new NoSuchElementException("Heladera no encontrada id: " + id));
+
+        return heladeraMapper.map(heladera);
+    }
+
+    public boolean clean() {
+    temperaturaRepository.findAll().forEach(temperaturaRepository::delete);
+     heladerasRepository.findAll().forEach(heladerasRepository::delete);
+     if(heladerasRepository.findAll().isEmpty()  && temperaturaRepository.findAll().isEmpty())
+         return true;
+
+     return false;
     }
 }

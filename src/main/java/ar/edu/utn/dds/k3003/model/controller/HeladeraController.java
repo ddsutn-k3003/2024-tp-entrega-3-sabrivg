@@ -62,7 +62,14 @@ public class HeladeraController {
         }
         catch(Exception ex){
             context.status(400);
-            context.result("Error de solicitud");
+            context.result("Error de solicitud "+ex.getMessage());
         }
+    }
+
+    public void cleanup(Context context) {
+        if(fachada.clean())
+            context.status(200).result("Se borro la BD con exito =)");
+        else
+            context.status(400).result("No se borro la BD =(");
     }
 }

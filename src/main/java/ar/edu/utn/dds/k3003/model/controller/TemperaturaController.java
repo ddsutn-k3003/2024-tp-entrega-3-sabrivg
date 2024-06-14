@@ -32,9 +32,16 @@ public class TemperaturaController {
             context.status(200);
             context.result("Temperatura registrada correctamente");
         }
-        catch (Exception ex){
+        catch (NoSuchElementException ne){
+            ne.printStackTrace();
             context.status(400);
-            context.result("Error de solicitud");
+            context.result("Error de solicitud "+ne.getMessage());
+
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+            context.status(500);
+            context.result("Error interno "+ex.getMessage());
         }
     }
 }

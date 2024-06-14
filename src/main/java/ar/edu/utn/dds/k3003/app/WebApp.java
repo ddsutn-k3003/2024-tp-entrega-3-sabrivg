@@ -56,6 +56,7 @@ public class WebApp {
         app.get("/heladeras/{id}/temperaturas",temperaturaController::obtener);
         app.post("/depositos",heladeraController::depositar);
         app.post("/retiros",heladeraController::retirar);
+        app.get("/cleanup",heladeraController::cleanup);
     }
 
     public static ObjectMapper createObjectMapper() {

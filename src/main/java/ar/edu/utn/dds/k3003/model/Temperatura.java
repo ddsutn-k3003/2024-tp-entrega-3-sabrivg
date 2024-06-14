@@ -14,15 +14,16 @@ public class Temperatura {
     private Long id;
     @Column
     private Integer temperatura;
-    @Column
-    private Integer heladeraId;
+    @ManyToOne
+    @JoinColumn(name = "heladera_id", nullable = false)
+    private Heladera heladera;
     @Column
     private LocalDateTime fechaMedicion;
 
-    public Temperatura(Integer temperatura, Integer heladeraId, LocalDateTime fechaMedicion) {
+    public Temperatura(Integer temperatura, Heladera heladera, LocalDateTime fechaMedicion) {
         this.temperatura = temperatura;
-        this.heladeraId = heladeraId;
-        this.fechaMedicion = fechaMedicion;
+        this.heladera = heladera;
+        this.fechaMedicion = LocalDateTime.now();
     }
 
 

@@ -17,8 +17,8 @@ public class Heladera {
     private Long id;
     @Column(columnDefinition ="varchar")
     private String nombre;
-
-    int viandas;
+    @Column
+    private int viandas;
     @Column
     int capacidadMax; //en unidad de viandas
     @Column
@@ -58,7 +58,7 @@ public class Heladera {
         this.cantidadAperturas++;
     }
 
-    public void retirarVianda(String qrVianda) throws Exception {
+    public void retirarVianda() throws Exception {
         this.cantidadAperturas++;
         if (this.viandas > 0) {
             this.viandas--;

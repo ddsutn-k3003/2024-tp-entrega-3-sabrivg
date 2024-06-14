@@ -1,6 +1,8 @@
 package ar.edu.utn.dds.k3003.repositories;
 
 
+import ar.edu.utn.dds.k3003.database.EntityManagerHelper;
+import ar.edu.utn.dds.k3003.database.Repository;
 import ar.edu.utn.dds.k3003.model.Heladera;
 import ar.edu.utn.dds.k3003.model.Temperatura;
 
@@ -11,27 +13,22 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class TemperaturaRepository {
-    //private Collection<Temperatura> temperaturas;
-    static EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("tpdb");;
-    EntityManager entityManager= entityManagerFactory.createEntityManager(); ;
+public class TemperaturaRepository extends Repository <Temperatura> {
+
 
     public TemperaturaRepository() {
-
-        //this.temperaturas = new ArrayList<Temperatura>();
+        super(Temperatura.class);
     }
 
-    public Temperatura save(Temperatura temperatura) {
+    public List<Temperatura> findAllById(Long idHeladera) {
+        EntityManager em = EntityManagerHelper.getEntityManager();
+        try {
+            List<Temperatura> listaTemps = em.createQuery("from Temperatura", Temperatura.class).getResultList();
+            return listaTemps;
+        } finally {
+            EntityManagerHelper.closeEntityManager();
+        }
 
-        entityManager.getTransaction().begin();
-        entityManager.persist(temperatura); //se prepara insert
-        entityManager.getTransaction().commit();//se ejecutan las sentencias
 
-        return temperatura;
-    }
-
-    public List<Temperatura> findById(Long idHeladera) {
-        List<Temperatura> listaTemps = entityManager.createQuery("from Temperatura", Temperatura.class).getResultList();
-        return listaTemps;
     }
 }
