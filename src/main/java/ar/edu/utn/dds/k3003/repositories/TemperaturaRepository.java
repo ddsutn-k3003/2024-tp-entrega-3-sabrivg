@@ -23,8 +23,8 @@ public class TemperaturaRepository extends Repository <Temperatura> {
     public List<Temperatura> findAllById(Long idHeladera) {
         EntityManager em = EntityManagerHelper.getEntityManager();
         try {
-            List<Temperatura> listaTemps = em.createQuery("from Temperatura", Temperatura.class).getResultList();
-            return listaTemps;
+            List<Temperatura> listaTemps = em.createQuery("from Temperatura where heladera_id="+idHeladera, Temperatura.class).getResultList();
+              return listaTemps;
         } finally {
             EntityManagerHelper.closeEntityManager();
         }
